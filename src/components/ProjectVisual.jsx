@@ -55,15 +55,32 @@ function Pipeline() {
   );
 }
 
-function Browser({ url, title }) {
+function Browser({ url, title, shot }) {
+  const bar = (
+    <div className="browser-bar">
+      <span className="dot" />
+      <span className="dot" />
+      <span className="dot" />
+      <span className="browser-url mono">{url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+    </div>
+  );
+
+  // Real screenshot of the live site, clickable through to it.
+  if (shot) {
+    return (
+      <a className="viz viz-browser has-shot" href={url} target="_blank" rel="noreferrer" aria-label={`Open ${title} live site`}>
+        {bar}
+        <div className="browser-shot">
+          <img src={shot} alt={`${title} website homepage`} loading="lazy" width="1200" height="750" />
+          <span className="shot-cta mono">visit live site ↗</span>
+        </div>
+      </a>
+    );
+  }
+
   return (
     <div className="viz viz-browser">
-      <div className="browser-bar">
-        <span className="dot" />
-        <span className="dot" />
-        <span className="dot" />
-        <span className="browser-url mono">{url.replace(/^https?:\/\//, '')}</span>
-      </div>
+      {bar}
       <div className="browser-body">
         <div className="wf-nav">
           <span className="wf-logo">{title}</span>
@@ -146,7 +163,7 @@ export default function ProjectVisual({ project }) {
     case 'wave':
       return <Wave />;
     case 'browser':
-      return <Browser url={project.live || project.github} title={project.name} />;
+      return <Browser url={project.live || project.github} title={project.name} shot={project.shot} />;
     default:
       return null;
   }

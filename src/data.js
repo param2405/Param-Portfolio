@@ -141,6 +141,7 @@ export const projects = [
     ],
     tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB'],
     live: 'https://brandincept.com/',
+    shot: '/projects/brandincept.webp',
     github: 'https://github.com/param2412',
   },
   {
@@ -159,7 +160,6 @@ export const projects = [
       'Responsive interface, an online booking system and streamlined customer workflows (results as reported by the client).',
     ],
     tech: ['TypeScript', 'JavaScript', 'CSS', 'React'],
-    live: 'https://nenopestcontrol-git-vercel-react-2192ac-param-parikhs-projects.vercel.app/',
     github: 'https://github.com/param2412/nenopestcontrol',
   },
 ];
