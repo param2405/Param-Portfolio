@@ -105,6 +105,100 @@ function Browser({ url, title, shot }) {
   );
 }
 
+const SERVICES = ['Termite', 'Cockroach', 'Rodent', 'Bed bugs'];
+const DAYS = [
+  ['Mon', 11],
+  ['Tue', 12],
+  ['Wed', 13],
+  ['Thu', 14],
+  ['Fri', 15],
+];
+const SLOTS = ['09:00', '11:30', '14:00', '16:30'];
+const WEEKS = [38, 42, 40, 47, 52, 58, 63, 70]; // relative inquiries, ~ +40% over the month
+
+// Self-playing booking flow: service → day → slot → confirm.
+function Booking() {
+  const ref = useRef(null);
+  const inView = useInView(ref);
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setStep(4);
+      return undefined;
+    }
+    const id = setInterval(() => setStep((s) => (s >= 6 ? 0 : s + 1)), 900);
+    return () => clearInterval(id);
+  }, [inView]);
+
+  const service = step >= 1 ? 1 : -1;
+  const day = step >= 2 ? 2 : -1;
+  const slot = step >= 3 ? 1 : -1;
+  const confirmed = step >= 4;
+  const max = Math.max(...WEEKS);
+
+  return (
+    <div className="viz viz-booking" ref={ref}>
+      <div className="viz-head">
+        <span className="bk-logo">N</span>
+        <span className="mono">book a pest-control visit</span>
+        <span className={`badge ${confirmed ? 'ok' : ''}`}>{confirmed ? 'booked' : 'step ' + Math.min(step + 1, 4) + '/4'}</span>
+      </div>
+
+      <div className="bk-body">
+        <div className="bk-label mono">service</div>
+        <div className="bk-row">
+          {SERVICES.map((s, i) => (
+            <span key={s} className={`bk-chip ${i === service ? 'on' : ''}`}>
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <div className="bk-label mono">date</div>
+        <div className="bk-days">
+          {DAYS.map(([d, n], i) => (
+            <span key={d} className={`bk-day ${i === day ? 'on' : ''}`}>
+              <small className="mono">{d}</small>
+              <b>{n}</b>
+            </span>
+          ))}
+        </div>
+
+        <div className="bk-label mono">time</div>
+        <div className="bk-row">
+          {SLOTS.map((t, i) => (
+            <span key={t} className={`bk-slot mono ${i === slot ? 'on' : ''}`}>
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className={`bk-confirm ${step === 3 ? 'ready' : ''} ${confirmed ? 'done' : ''}`}>
+          {confirmed ? '✓ Booking confirmed · Wed 13, 11:30' : 'Confirm booking'}
+        </div>
+      </div>
+
+      <div className="bk-chart">
+        <div className="bk-chart-head mono">
+          <span>online inquiries / week</span>
+          <span className="acc">+40%</span>
+        </div>
+        <div className="bk-bars">
+          {WEEKS.map((v, i) => (
+            <i key={i} className={i >= 4 ? 'after' : ''} style={{ '--h': `${(v / max) * 100}%`, '--i': i }} />
+          ))}
+        </div>
+        <div className="bk-axis mono">
+          <span>before</span>
+          <span>after launch</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Rag() {
   const chunks = ['Hb 10.2 g/dL ↓', 'WBC 7,400 /µL', 'Vit-D 14 ng/mL ↓', 'TSH 2.1 mIU/L', 'LDL 168 mg/dL ↑'];
   return (
@@ -162,6 +256,8 @@ export default function ProjectVisual({ project }) {
       return <Rag />;
     case 'wave':
       return <Wave />;
+    case 'booking':
+      return <Booking />;
     case 'browser':
       return <Browser url={project.live || project.github} title={project.name} shot={project.shot} />;
     default:

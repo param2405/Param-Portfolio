@@ -142,7 +142,7 @@ export const projects = [
     tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB'],
     live: 'https://brandincept.com/',
     shot: '/projects/brandincept.webp',
-    github: 'https://github.com/param2412',
+    github: 'https://github.com/DevanshPrajapati28/brandincept-backend',
   },
   {
     id: 'neno',
@@ -150,7 +150,7 @@ export const projects = [
     kicker: 'Client website with online booking',
     year: 'Aug 2025',
     kind: 'Full-stack',
-    visual: 'browser',
+    visual: 'booking',
     metrics: [
       { value: '+40%', label: 'online inquiries in one month' },
       { value: '+30%', label: 'customer satisfaction' },
