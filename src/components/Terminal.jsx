@@ -1,21 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { profile, modes, projects } from '../data';
+import { profile, projects } from '../data';
 
 const HELP = [
   ['help', 'list commands'],
   ['whoami', 'short intro'],
   ['projects', 'list projects'],
+  ['skills', 'core toolkit'],
   ['email', 'open a new email to Param'],
   ['github · linkedin · leetcode', 'open profile'],
-  ['resume', 'download the resume for this mode'],
-  ['mode ai | mode sde', 'switch the whole site'],
+  ['resume', 'download the resume'],
   ['clear', 'clear the screen'],
 ];
 
-export default function Terminal({ mode, setMode }) {
-  const [lines, setLines] = useState([
-    { k: 'sys', t: `param.sh v2 — type "help" to get started` },
-  ]);
+export default function Terminal() {
+  const [lines, setLines] = useState([{ k: 'sys', t: 'param.sh v2 — type "help" to get started' }]);
   const [value, setValue] = useState('');
   const [history, setHistory] = useState([]);
   const [hIdx, setHIdx] = useState(-1);
@@ -33,16 +31,24 @@ export default function Terminal({ mode, setMode }) {
     const cmd = raw.trim();
     const echo = { k: 'in', t: cmd };
     if (!cmd) return print(echo);
-    const [c, arg] = cmd.toLowerCase().split(/\s+/);
+    const c = cmd.toLowerCase().split(/\s+/)[0];
 
     switch (c) {
       case 'help':
         return print(echo, ...HELP.map(([a, b]) => ({ k: 'help', t: a, d: b })));
       case 'whoami':
-        return print(echo, { k: 'out', t: `${profile.name} — ${modes[mode].role}. ${modes[mode].blurb}` });
+        return print(echo, {
+          k: 'out',
+          t: `${profile.name} — ${profile.role}. I build applied AI systems (RAG, LLM agents with LangGraph, anomaly detection, speech models) and the full-stack products around them.`,
+        });
       case 'projects':
       case 'ls':
-        return print(echo, ...projects.map((p) => ({ k: 'out', t: `▸ ${p.name.padEnd(28, ' ')} ${p.year}` })));
+        return print(echo, ...projects.map((p) => ({ k: 'out', t: `▸ ${p.name.padEnd(28, ' ')} ${p.kind}` })));
+      case 'skills':
+        return print(echo, {
+          k: 'out',
+          t: 'Python · PyTorch · Scikit-learn · XGBoost · NLP · LLMs · RAG · LangGraph · embeddings · pgvector · FAISS · FastAPI · React · Node.js · Docker · AWS',
+        });
       case 'email':
       case 'contact':
         window.location.href = `mailto:${profile.email}`;
@@ -54,14 +60,8 @@ export default function Terminal({ mode, setMode }) {
         return print(echo, { k: 'ok', t: `opening ${c}…` });
       case 'resume':
       case 'cv':
-        open(profile.resume[mode]);
-        return print(echo, { k: 'ok', t: `opening ${modes[mode].label} resume…` });
-      case 'mode':
-        if (arg === 'ai' || arg === 'sde') {
-          setMode(arg);
-          return print(echo, { k: 'ok', t: `switched to ${modes[arg].label} mode` });
-        }
-        return print(echo, { k: 'err', t: 'usage: mode ai | mode sde' });
+        open(profile.resume);
+        return print(echo, { k: 'ok', t: 'opening resume…' });
       case 'clear':
         return setLines([]);
       case 'sudo':
@@ -92,7 +92,7 @@ export default function Terminal({ mode, setMode }) {
     }
   };
 
-  const chips = ['help', 'whoami', 'projects', 'resume', mode === 'ai' ? 'mode sde' : 'mode ai'];
+  const chips = ['help', 'whoami', 'projects', 'skills', 'resume'];
 
   return (
     <div className="terminal" onClick={() => inputRef.current && inputRef.current.focus()} role="presentation">

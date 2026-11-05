@@ -1,71 +1,32 @@
 // Single source of truth for the portfolio.
-// Content is drawn from two resumes: Software (sde) and AI/ML (ai).
-// Anything with { sde, ai } changes when the visitor flips the mode switch.
+// One combined profile: AI/ML, GenAI & Data Science first, full-stack engineering alongside.
 
 export const profile = {
   name: 'Param Parikh',
-  first: 'Param',
-  last: 'Parikh',
   email: 'paramworkparikh80@gmail.com',
   phone: '+91 90992 78738',
-  location: 'Gujarat, India',
   github: 'https://github.com/param2405',
   linkedin: 'https://www.linkedin.com/in/param-parikh-714030277/',
   leetcode: 'https://leetcode.com/u/param2412/',
-  resume: {
-    sde: '/Param-Parikh-SDE-Resume.pdf',
-    ai: '/Param-Parikh-AIML-Resume.pdf',
-  },
+  resume: '/Param-Parikh-Resume.pdf',
+  role: 'AI / ML & Software Engineer',
+  status: 'Open to AI/ML, GenAI, Data Science & SDE roles',
+  // The hero line cycles through these.
+  verbs: ['intelligent ML systems', 'GenAI & RAG pipelines', 'data-driven products', 'reliable full-stack apps'],
 };
 
-export const modes = {
-  sde: {
-    key: 'sde',
-    label: 'Software',
-    role: 'Software Engineer',
-    verb: 'reliable full-stack products',
-    status: 'Open to SDE internships & full-time roles',
-    blurb:
-      'I build end-to-end web products with React, Node.js and Express — from the API and the database to the pixel on the screen — and I work directly with clients to ship what they actually need.',
-  },
-  ai: {
-    key: 'ai',
-    label: 'AI / ML',
-    role: 'AI / ML Engineer',
-    verb: 'intelligent ML systems',
-    status: 'Open to AI/ML internships & full-time roles',
-    blurb:
-      'I build applied AI systems — RAG pipelines, LLM agents with LangGraph, anomaly detection and speech models — and take them all the way to something people can run, not just a notebook.',
-  },
-};
+export const stats = [
+  { value: '99.44%', label: 'severity-classification accuracy' },
+  { value: '93%', label: 'faster incident resolution' },
+  { value: '3', label: 'internships · AI/ML + software' },
+  { value: '8.64', label: 'CGPA · B.Tech IT' },
+];
 
-export const stats = {
-  sde: [
-    { value: '3', label: 'internships shipped' },
-    { value: '40%', label: 'more client inquiries (Neno)' },
-    { value: '8.64', label: 'CGPA · B.Tech IT' },
-    { value: 'Top 20', label: 'of 300+ teams · DA-IICT' },
-  ],
-  ai: [
-    { value: '99.44%', label: 'severity-classification accuracy' },
-    { value: '93%', label: 'faster incident resolution' },
-    { value: '97%', label: 'less meeting-documentation time' },
-    { value: '8.64', label: 'CGPA · B.Tech IT' },
-  ],
-};
-
-export const about = {
-  sde: [
-    "I'm a B.Tech Information Technology student at A. D. Patel Institute of Technology (CGPA 8.64) who likes shipping real things for real users.",
-    "Across three internships I've built full-stack client websites, an expense-tracking app with analytics dashboards, and an AI meeting summarizer — handling requirements, daily client updates and the feedback loop myself.",
-    'I care about clean REST APIs, reusable components and interfaces that work on every screen size.',
-  ],
-  ai: [
-    "I'm a B.Tech Information Technology student at A. D. Patel Institute of Technology (CGPA 8.64) focused on applied machine learning and generative AI.",
-    'I like the full arc of an ML system: preprocessing and feature engineering, model evaluation, retrieval with embeddings and vector search, and wrapping it in FastAPI, Docker and Terraform so it actually runs.',
-    'Recent work: an AIOps platform that cut incident resolution from ~45 min to under 3, and a RAG-based medical report analyzer.',
-  ],
-};
+export const about = [
+  "I'm a B.Tech Information Technology student at A. D. Patel Institute of Technology (CGPA 8.64), focused on applied machine learning, generative AI and data science.",
+  'I like the full arc of an ML system: data preprocessing and feature engineering, model training and evaluation, retrieval with embeddings and vector search, LLM agents with LangGraph, and wrapping it all in FastAPI, Docker and Terraform so it actually runs.',
+  "Three internships across AI/ML and full-stack development taught me the other half: clean REST APIs, React front-ends and working directly with clients. I build AI that ships as a real product, not just a notebook.",
+];
 
 export const experience = [
   {
@@ -73,18 +34,11 @@ export const experience = [
     company: 'Logic Minds by Parii',
     period: 'Apr 2026 — Jun 2026',
     hash: 'f3a91c2',
-    branch: 'main',
-    focus: ['sde'],
-    bullets: {
-      sde: [
-        'Developed end-to-end full-stack client websites using React.js, Node.js and Express.js, integrating RESTful APIs and database operations.',
-        'Owned client communication and requirements gathering, shared daily progress updates and turned feedback into shipped features.',
-      ],
-      ai: [
-        'Improved web application functionality by developing and integrating RESTful APIs and implementing backend features.',
-        'Supported code maintainability through modular implementation and Git-based collaboration.',
-      ],
-    },
+    branch: 'web',
+    bullets: [
+      'Developed end-to-end full-stack client websites using React.js, Node.js and Express.js, integrating RESTful APIs and database operations.',
+      'Owned client communication and requirements gathering, shared daily progress updates and turned feedback into shipped features.',
+    ],
     tags: ['React.js', 'Node.js', 'Express.js', 'REST APIs', 'MongoDB'],
   },
   {
@@ -93,17 +47,10 @@ export const experience = [
     period: 'Sep 2025 — Nov 2025',
     hash: '7be04d9',
     branch: 'ml',
-    focus: ['ai'],
-    bullets: {
-      sde: [
-        'Improved meeting-review efficiency by up to 50% by building an AI-powered meeting summarizer with Python, Whisper, GPT and NLP.',
-        'Handled data preprocessing and language-model integration for a solution targeting 1,000+ potential users, in an Agile team.',
-      ],
-      ai: [
-        'Improved meeting-review efficiency by up to 50% with a Python AI meeting summarizer using Whisper, GPT and NLP for transcription and summarization.',
-        'Owned data preprocessing and language-model integration for a solution targeting 1,000+ potential users, working with mentors in an Agile team.',
-      ],
-    },
+    bullets: [
+      'Improved meeting-review efficiency by up to 50% with a Python AI meeting summarizer using Whisper, GPT and NLP for automated transcription and summarization.',
+      'Owned data preprocessing and language-model integration for a solution targeting 1,000+ potential users, working with mentors in an Agile team.',
+    ],
     tags: ['Python', 'Whisper', 'GPT', 'NLP', 'pyannote', 'Streamlit'],
   },
   {
@@ -111,18 +58,11 @@ export const experience = [
     company: 'P & D Technology',
     period: 'Jan 2025 — Aug 2025',
     hash: '2c8e5a0',
-    branch: 'main',
-    focus: ['sde'],
-    bullets: {
-      sde: [
-        'Developed a full-stack expense-tracking application with React, Node.js and MongoDB, with interactive dashboards for monthly analytics.',
-        'Collaborated with a remote team using Git and Agile to coordinate implementation and keep code quality high.',
-      ],
-      ai: [
-        'Developed a full-stack expense-tracking application using React, Node.js and MongoDB.',
-        'Enabled monthly expense tracking and analytics through interactive dashboards backed by application data.',
-      ],
-    },
+    branch: 'web',
+    bullets: [
+      'Developed a full-stack expense-tracking application with React, Node.js and MongoDB, with interactive dashboards for monthly expense analytics.',
+      'Collaborated with a remote team using Git and Agile to coordinate implementation and keep code quality high.',
+    ],
     tags: ['React', 'Node.js', 'MongoDB', 'Git', 'Agile'],
   },
 ];
@@ -133,7 +73,7 @@ export const projects = [
     name: 'OpsPilot AI',
     kicker: 'Intelligent AIOps & cloud incident resolution',
     year: 'Sep — Oct 2026',
-    kind: ['ai'],
+    kind: 'AI / ML',
     visual: 'pipeline',
     metrics: [
       { value: '93%', label: 'faster resolution · ~45 min → <3 min' },
@@ -148,30 +88,11 @@ export const projects = [
     github: 'https://github.com/param2405/OpsPilot---AI-Intelligent-AIOps-Cloud-Incident-Resolution-Platform',
   },
   {
-    id: 'brandincept',
-    name: 'Brandincept',
-    kicker: 'Corporate leasing & franchise advisory — client site',
-    year: 'Mar 2026',
-    kind: ['sde'],
-    visual: 'browser',
-    metrics: [
-      { value: 'Live', label: 'in production for a real client' },
-      { value: 'MERN', label: 'React · Node · Express · MongoDB' },
-    ],
-    bullets: [
-      'A corporate website showcasing company services, brand identity and business offerings, built with React.js, Node.js, Express.js and MongoDB.',
-      'Responsive interface, reusable components and backend workflows tailored to the client’s requirements.',
-    ],
-    tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB'],
-    live: 'https://brandincept-frontend.vercel.app',
-    github: 'https://github.com/param2405/brandincept-frontend',
-  },
-  {
     id: 'medintel',
     name: 'MedIntel',
     kicker: 'AI medical report analyzer',
     year: 'Jun 2026',
-    kind: ['ai'],
+    kind: 'GenAI · RAG',
     visual: 'rag',
     metrics: [
       { value: '90%', label: 'less information-retrieval time' },
@@ -189,7 +110,7 @@ export const projects = [
     name: 'AI Live Meeting Summarizer',
     kicker: 'Speaker-aware transcripts & LLM summaries',
     year: 'Sep — Nov 2025',
-    kind: ['ai', 'sde'],
+    kind: 'AI / ML · NLP',
     visual: 'wave',
     metrics: [
       { value: '97%', label: 'less documentation time' },
@@ -204,11 +125,30 @@ export const projects = [
     github: 'https://github.com/Speech-Summarizer-Application-IF-SB/Param-Parikh',
   },
   {
+    id: 'brandincept',
+    name: 'Brandincept',
+    kicker: 'Corporate leasing & franchise advisory — client site',
+    year: 'Mar 2026',
+    kind: 'Full-stack',
+    visual: 'browser',
+    metrics: [
+      { value: 'Live', label: 'in production for a real client' },
+      { value: 'MERN', label: 'React · Node · Express · MongoDB' },
+    ],
+    bullets: [
+      'A corporate website showcasing company services, brand identity and business offerings, built with React.js, Node.js, Express.js and MongoDB.',
+      'Responsive interface, reusable components and backend workflows tailored to the client’s requirements.',
+    ],
+    tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB'],
+    live: 'https://brandincept.com/',
+    github: 'https://github.com/param2412',
+  },
+  {
     id: 'neno',
     name: 'Neno Pest-Control',
     kicker: 'Client website with online booking',
     year: 'Aug 2025',
-    kind: ['sde'],
+    kind: 'Full-stack',
     visual: 'browser',
     metrics: [
       { value: '+40%', label: 'online inquiries in one month' },
@@ -219,8 +159,8 @@ export const projects = [
       'Responsive interface, an online booking system and streamlined customer workflows (results as reported by the client).',
     ],
     tech: ['TypeScript', 'JavaScript', 'CSS', 'React'],
-    live: 'https://nenopestcontrol.in',
-    github: 'https://github.com/param2405/nenopestcontrol',
+    live: 'https://nenopestcontrol-git-vercel-react-2192ac-param-parikhs-projects.vercel.app/',
+    github: 'https://github.com/param2412/nenopestcontrol',
   },
 ];
 
@@ -245,63 +185,63 @@ export const archive = [
   },
 ];
 
-// Periodic table of skills. `m` = which mode(s) it's most relevant to.
+// Periodic table of skills. `f: true` = core focus (AI/ML, GenAI, Data Science) — these glow.
 export const skillGroups = [
   { key: 'lang', name: 'Languages' },
-  { key: 'web', name: 'Web' },
-  { key: 'ml', name: 'AI / ML' },
+  { key: 'ml', name: 'AI / ML & Data Science' },
   { key: 'genai', name: 'Generative AI' },
+  { key: 'web', name: 'Backend & Web' },
   { key: 'data', name: 'Data & Cloud' },
   { key: 'ops', name: 'DevOps & Tools' },
 ];
 
 export const skills = [
-  { s: 'Py', n: 'Python', g: 'lang', m: ['ai', 'sde'] },
-  { s: 'Js', n: 'JavaScript', g: 'lang', m: ['sde', 'ai'] },
-  { s: 'Ts', n: 'TypeScript', g: 'lang', m: ['sde', 'ai'] },
-  { s: 'C', n: 'C', g: 'lang', m: ['sde'] },
-  { s: 'C+', n: 'C++', g: 'lang', m: ['sde'] },
+  { s: 'Py', n: 'Python', g: 'lang', f: true },
+  { s: 'Ts', n: 'TypeScript', g: 'lang' },
+  { s: 'Js', n: 'JavaScript', g: 'lang' },
+  { s: 'C+', n: 'C / C++', g: 'lang' },
 
-  { s: 'Re', n: 'React.js', g: 'web', m: ['sde'] },
-  { s: 'No', n: 'Node.js', g: 'web', m: ['sde'] },
-  { s: 'Ex', n: 'Express.js', g: 'web', m: ['sde'] },
-  { s: 'Ht', n: 'HTML / CSS', g: 'web', m: ['sde'] },
-  { s: 'Fa', n: 'FastAPI', g: 'web', m: ['ai'] },
-  { s: 'Fl', n: 'Flask', g: 'web', m: ['ai', 'sde'] },
-  { s: 'Dj', n: 'Django', g: 'web', m: ['ai', 'sde'] },
-  { s: 'Ap', n: 'REST APIs', g: 'web', m: ['sde', 'ai'] },
+  { s: 'Ml', n: 'Machine Learning', g: 'ml', f: true },
+  { s: 'Dl', n: 'Deep Learning', g: 'ml', f: true },
+  { s: 'Nl', n: 'NLP', g: 'ml', f: true },
+  { s: 'Pt', n: 'PyTorch', g: 'ml', f: true },
+  { s: 'Sk', n: 'Scikit-learn', g: 'ml', f: true },
+  { s: 'Xg', n: 'XGBoost', g: 'ml', f: true },
+  { s: 'Np', n: 'NumPy / Pandas', g: 'ml', f: true },
+  { s: 'Fe', n: 'Feature Engineering', g: 'ml', f: true },
+  { s: 'Me', n: 'Model Evaluation', g: 'ml', f: true },
+  { s: 'Mp', n: 'Matplotlib / Seaborn', g: 'ml', f: true },
 
-  { s: 'Ml', n: 'Machine Learning', g: 'ml', m: ['ai'] },
-  { s: 'Dl', n: 'Deep Learning', g: 'ml', m: ['ai'] },
-  { s: 'Nl', n: 'NLP', g: 'ml', m: ['ai', 'sde'] },
-  { s: 'Pt', n: 'PyTorch', g: 'ml', m: ['ai'] },
-  { s: 'Sk', n: 'Scikit-learn', g: 'ml', m: ['ai', 'sde'] },
-  { s: 'Xg', n: 'XGBoost', g: 'ml', m: ['ai'] },
-  { s: 'Np', n: 'NumPy / Pandas', g: 'ml', m: ['ai', 'sde'] },
-  { s: 'Fe', n: 'Feature Engineering', g: 'ml', m: ['ai'] },
+  { s: 'Ll', n: 'LLMs', g: 'genai', f: true },
+  { s: 'Rg', n: 'RAG', g: 'genai', f: true },
+  { s: 'Lg', n: 'LangGraph', g: 'genai', f: true },
+  { s: 'Em', n: 'Embeddings', g: 'genai', f: true },
+  { s: 'Vs', n: 'Vector / Semantic Search', g: 'genai', f: true },
+  { s: 'Pe', n: 'Prompt Engineering', g: 'genai', f: true },
+  { s: 'Hf', n: 'Hugging Face', g: 'genai', f: true },
+  { s: 'St', n: 'Streamlit', g: 'genai', f: true },
 
-  { s: 'Ll', n: 'LLMs', g: 'genai', m: ['ai'] },
-  { s: 'Rg', n: 'RAG', g: 'genai', m: ['ai'] },
-  { s: 'Lg', n: 'LangGraph', g: 'genai', m: ['ai'] },
-  { s: 'Em', n: 'Embeddings', g: 'genai', m: ['ai'] },
-  { s: 'Vs', n: 'Vector Search', g: 'genai', m: ['ai'] },
-  { s: 'Pe', n: 'Prompt Engineering', g: 'genai', m: ['ai', 'sde'] },
-  { s: 'Hf', n: 'Hugging Face', g: 'genai', m: ['ai', 'sde'] },
-  { s: 'St', n: 'Streamlit', g: 'genai', m: ['ai'] },
+  { s: 'Fa', n: 'FastAPI', g: 'web', f: true },
+  { s: 'Fl', n: 'Flask', g: 'web' },
+  { s: 'Dj', n: 'Django', g: 'web' },
+  { s: 'Re', n: 'React.js', g: 'web' },
+  { s: 'No', n: 'Node.js', g: 'web' },
+  { s: 'Ex', n: 'Express.js', g: 'web' },
+  { s: 'Ap', n: 'REST APIs', g: 'web' },
 
-  { s: 'Mg', n: 'MongoDB', g: 'data', m: ['sde', 'ai'] },
-  { s: 'Pg', n: 'PostgreSQL', g: 'data', m: ['sde', 'ai'] },
-  { s: 'Pv', n: 'pgvector', g: 'data', m: ['ai'] },
-  { s: 'Sq', n: 'MySQL', g: 'data', m: ['sde', 'ai'] },
-  { s: 'Aw', n: 'AWS', g: 'data', m: ['sde', 'ai'] },
+  { s: 'Pv', n: 'pgvector', g: 'data', f: true },
+  { s: 'Pg', n: 'PostgreSQL', g: 'data' },
+  { s: 'Mg', n: 'MongoDB', g: 'data' },
+  { s: 'Sq', n: 'MySQL', g: 'data' },
+  { s: 'Aw', n: 'AWS', g: 'data' },
 
-  { s: 'Dk', n: 'Docker', g: 'ops', m: ['sde', 'ai'] },
-  { s: 'Tf', n: 'Terraform', g: 'ops', m: ['ai'] },
-  { s: 'Gt', n: 'Git / GitHub', g: 'ops', m: ['sde', 'ai'] },
-  { s: 'Pm', n: 'Postman', g: 'ops', m: ['sde'] },
-  { s: 'Vc', n: 'Vercel / Render', g: 'ops', m: ['sde', 'ai'] },
-  { s: 'N8', n: 'n8n', g: 'ops', m: ['sde', 'ai'] },
-  { s: 'Cu', n: 'Cursor / Claude', g: 'ops', m: ['sde', 'ai'] },
+  { s: 'Dk', n: 'Docker', g: 'ops' },
+  { s: 'Tf', n: 'Terraform', g: 'ops' },
+  { s: 'Gt', n: 'Git / GitHub', g: 'ops' },
+  { s: 'Pm', n: 'Postman', g: 'ops' },
+  { s: 'Vc', n: 'Vercel / Render', g: 'ops' },
+  { s: 'N8', n: 'n8n', g: 'ops' },
+  { s: 'Cu', n: 'Cursor / Claude', g: 'ops' },
 ];
 
 export const core = ['Data Structures & Algorithms', 'OOP', 'DBMS', 'Team Leadership', 'Communication'];

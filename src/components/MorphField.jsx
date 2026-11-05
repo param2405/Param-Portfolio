@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
 // One set of 140 particles, two personalities:
-//  - Software mode: a 20×7 contribution heatmap (squares, commits light up)
-//  - AI/ML mode:    a 6-layer neural network (circles, signals propagate)
-// Switching modes morphs every particle's position, shape and colour.
+//  - "sde": a 20x7 contribution heatmap (squares, commits light up)
+//  - "ai":  a 6-layer neural network (circles, signals propagate)
+// Changing the `mode` prop morphs every particle's position, shape and colour.
 
 const COLS = 20;
 const ROWS = 7;
@@ -11,9 +11,9 @@ const N = COLS * ROWS;
 const LAYERS = [5, 9, 12, 12, 9, 5];
 
 const PALETTE = {
-  sde: [200, 255, 62],
+  sde: [61, 255, 197],
   ai: [160, 139, 255],
-  sde2: [61, 255, 197],
+  sde2: [160, 139, 255],
   ai2: [255, 122, 217],
 };
 

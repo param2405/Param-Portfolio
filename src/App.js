@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   profile,
-  modes,
   stats,
   about,
   experience,
@@ -19,22 +18,12 @@ import ProjectVisual from './components/ProjectVisual';
 import CommandPalette from './components/CommandPalette';
 import Terminal from './components/Terminal';
 
-function initialMode() {
-  try {
-    const q = new URLSearchParams(window.location.search).get('mode');
-    if (q === 'ai' || q === 'sde') return q;
-    const saved = window.localStorage.getItem('pp-mode');
-    if (saved === 'ai' || saved === 'sde') return saved;
-  } catch (e) {
-    /* storage unavailable */
-  }
-  return 'sde';
-}
-
 const scrollTo = (id) => {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
+
+const openUrl = (url) => window.open(url, '_blank', 'noopener,noreferrer');
 
 const Arrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -42,31 +31,11 @@ const Arrow = () => (
   </svg>
 );
 
-/* ---------------------------------------------------------------- mode switch */
-
-function ModeSwitch({ mode, setMode, compact }) {
-  return (
-    <div className={`mode-switch ${compact ? 'compact' : ''}`} role="radiogroup" aria-label="Portfolio mode">
-      <span className="mode-thumb" data-pos={mode} aria-hidden="true" />
-      {['sde', 'ai'].map((m) => (
-        <button
-          key={m}
-          type="button"
-          role="radio"
-          aria-checked={mode === m}
-          className={mode === m ? 'on' : ''}
-          onClick={() => setMode(m)}
-        >
-          <span className="mono">{m === 'sde' ? '</>' : '◉'}</span> {modes[m].label}
-        </button>
-      ))}
-    </div>
-  );
-}
+const FOCUS = ['AI / ML', 'Generative AI', 'Data Science', 'Full-stack'];
 
 /* ---------------------------------------------------------------- nav */
 
-function Nav({ mode, setMode, openPalette }) {
+function Nav({ openPalette }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 40);
@@ -94,7 +63,9 @@ function Nav({ mode, setMode, openPalette }) {
         ))}
       </nav>
       <div className="nav-right">
-        <ModeSwitch mode={mode} setMode={setMode} compact />
+        <a className="btn small primary nav-resume" href={profile.resume} target="_blank" rel="noreferrer">
+          Resume <Arrow />
+        </a>
         <button type="button" className="kbd-btn mono" onClick={openPalette} aria-label="Open command palette">
           ⌘K
         </button>
@@ -115,28 +86,36 @@ function Stat({ value, label, active }) {
   );
 }
 
-function Hero({ mode, setMode }) {
-  const verb = useScramble(modes[mode].verb);
-  const role = useScramble(modes[mode].role);
+function Hero() {
+  const [idx, setIdx] = useState(0);
   const [ready, setReady] = useState(false);
+  const verb = useScramble(profile.verbs[idx]);
+  // The field alternates: neural network while ML phrases show, commit grid for the full-stack phrase.
+  const field = profile.verbs[idx].includes('full-stack') ? 'grid' : 'net';
+
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 300);
-    return () => clearTimeout(t);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const id = reduced ? null : setInterval(() => setIdx((i) => (i + 1) % profile.verbs.length), 3200);
+    return () => {
+      clearTimeout(t);
+      if (id) clearInterval(id);
+    };
   }, []);
 
   return (
     <section className="hero" id="top">
       <div className="hero-field">
-        <MorphField mode={mode} />
+        <MorphField mode={field === 'net' ? 'ai' : 'sde'} />
         <div className="field-caption mono">
-          {mode === 'sde' ? 'fig.1 — commits, live' : 'fig.1 — forward pass, live'}
+          {field === 'net' ? 'fig.1 — forward pass, live' : 'fig.1 — commits, live'}
         </div>
       </div>
 
       <div className="hero-copy">
         <div className="status mono reveal-1">
           <span className="pulse" />
-          {modes[mode].status}
+          {profile.status}
         </div>
 
         <h1 className="hero-name reveal-2">
@@ -145,28 +124,31 @@ function Hero({ mode, setMode }) {
         </h1>
 
         <p className="hero-role reveal-3">
-          <span className="mono role-tag">{role}</span>
+          <span className="mono role-tag">{profile.role}</span>
           I engineer <span className="verb">{verb}</span>
           <span className="caret" aria-hidden="true" />
         </p>
 
-        <div className="hero-switch reveal-4">
-          <span className="mono switch-hint">view this portfolio as →</span>
-          <ModeSwitch mode={mode} setMode={setMode} />
+        <div className="focus reveal-4" aria-label="Focus areas">
+          {FOCUS.map((f, i) => (
+            <span key={f} className={`focus-chip mono ${i < 3 ? 'main' : ''}`}>
+              {f}
+            </span>
+          ))}
         </div>
 
         <div className="hero-cta reveal-5">
           <button type="button" className="btn primary" onClick={() => scrollTo('work')}>
             See the work
           </button>
-          <a className="btn ghost" href={profile.resume[mode]} target="_blank" rel="noreferrer">
-            {modes[mode].label} resume <Arrow />
+          <a className="btn ghost" href={profile.resume} target="_blank" rel="noreferrer">
+            Download resume <Arrow />
           </a>
         </div>
       </div>
 
-      <div className="hero-stats reveal-6" key={mode}>
-        {stats[mode].map((s) => (
+      <div className="hero-stats reveal-6">
+        {stats.map((s) => (
           <Stat key={s.label} {...s} active={ready} />
         ))}
       </div>
@@ -176,12 +158,10 @@ function Hero({ mode, setMode }) {
 
 /* ---------------------------------------------------------------- marquee */
 
-function Marquee({ mode }) {
-  const words =
-    mode === 'ai'
-      ? ['LangGraph', 'RAG', 'PyTorch', 'pgvector', 'XGBoost', 'Whisper', 'FastAPI', 'FAISS', 'Terraform', 'Embeddings']
-      : ['React', 'Node.js', 'Express', 'MongoDB', 'TypeScript', 'REST APIs', 'PostgreSQL', 'Docker', 'AWS', 'Git'];
-  const row = [...words, ...words];
+const MARQUEE = ['LangGraph', 'RAG', 'PyTorch', 'pgvector', 'XGBoost', 'Whisper', 'FastAPI', 'FAISS', 'Scikit-learn', 'React', 'Node.js', 'Docker', 'AWS'];
+
+function Marquee() {
+  const row = [...MARQUEE, ...MARQUEE];
   return (
     <div className="marquee" aria-hidden="true">
       <div className="marquee-track">
@@ -212,19 +192,19 @@ function SectionHead({ n, kicker, title, children }) {
 
 /* ---------------------------------------------------------------- about */
 
-function About({ mode }) {
+function About() {
   return (
     <section className="section about" id="about">
-      <SectionHead n="01" kicker="readme.md" title={<>A builder who ships <em>both</em> sides of the stack.</>} />
+      <SectionHead n="01" kicker="readme.md" title={<>AI that ships as a <em>real</em> product.</>} />
       <div className="about-grid">
         <div className="readme" data-reveal>
           <div className="readme-bar mono">
             <span>README.md</span>
-            <span className="mute">{modes[mode].label.toLowerCase()} build</span>
+            <span className="mute">ai/ml · genai · data science · full-stack</span>
           </div>
-          <div className="readme-body" key={mode}>
+          <div className="readme-body">
             <p className="mono h"># hello, I&apos;m Param</p>
-            {about[mode].map((p) => (
+            {about.map((p) => (
               <p key={p}>{p}</p>
             ))}
           </div>
@@ -245,8 +225,6 @@ function About({ mode }) {
               </span>
             ))}
           </div>
-          <div className="mono mute edu-core-l">based in</div>
-          <div className="edu-degree">{profile.location}</div>
         </aside>
       </div>
     </section>
@@ -267,26 +245,20 @@ function Metric({ value, label }) {
   );
 }
 
-function ProjectCard({ p, i, mode }) {
+function ProjectCard({ p, i }) {
   const ref = useRef(null);
   const onMove = (e) => {
     const r = ref.current.getBoundingClientRect();
     ref.current.style.setProperty('--mx', `${e.clientX - r.left}px`);
     ref.current.style.setProperty('--my', `${e.clientY - r.top}px`);
   };
-  const match = p.kind.includes(mode);
   return (
-    <article
-      ref={ref}
-      className={`project ${i === 0 ? 'featured' : ''} ${match ? '' : 'off-mode'}`}
-      onMouseMove={onMove}
-      data-reveal
-    >
+    <article ref={ref} className={`project ${i === 0 ? 'featured' : ''}`} onMouseMove={onMove} data-reveal>
       <div className="project-info">
         <div className="project-top mono">
           <span className="acc">{String(i + 1).padStart(2, '0')}</span>
           <span>{p.year}</span>
-          <span className="kind">{p.kind.map((k) => (k === 'ai' ? 'AI/ML' : 'SOFTWARE')).join(' + ')}</span>
+          <span className="kind">{p.kind.toUpperCase()}</span>
         </div>
         <h3 className="project-name">{p.name}</h3>
         <p className="project-kicker">{p.kicker}</p>
@@ -315,7 +287,7 @@ function ProjectCard({ p, i, mode }) {
           )}
           {p.github && (
             <a className="btn small ghost" href={p.github} target="_blank" rel="noreferrer">
-              Source <Arrow />
+              GitHub <Arrow />
             </a>
           )}
         </div>
@@ -327,20 +299,15 @@ function ProjectCard({ p, i, mode }) {
   );
 }
 
-function Work({ mode }) {
-  const ordered = useMemo(() => {
-    const score = (p) => (p.kind[0] === mode ? 0 : p.kind.includes(mode) ? 1 : 2);
-    return [...projects].sort((a, b) => score(a) - score(b));
-  }, [mode]);
-
+function Work() {
   return (
     <section className="section" id="work">
       <SectionHead n="02" kicker="selected work" title={<>Projects with <em>numbers</em> attached.</>}>
-        Ordered for the {modes[mode].label} view — flip the switch and the most relevant work rises to the top.
+        Applied AI and machine learning first, followed by full-stack products built for real clients.
       </SectionHead>
       <div className="projects">
-        {ordered.map((p, i) => (
-          <ProjectCard key={p.id} p={p} i={i} mode={mode} />
+        {projects.map((p, i) => (
+          <ProjectCard key={p.id} p={p} i={i} />
         ))}
       </div>
       <div className="archive" data-reveal>
@@ -362,45 +329,42 @@ function Work({ mode }) {
 
 /* ---------------------------------------------------------------- experience */
 
-function Experience({ mode }) {
+function Experience() {
   return (
     <section className="section" id="experience">
       <SectionHead n="03" kicker="git log --graph" title={<>Three internships, <em>merged</em>.</>} />
       <div className="gitlog">
-        {experience.map((e, i) => {
-          const lit = e.focus.includes(mode);
-          return (
-            <div key={e.hash} className={`commit ${lit ? 'lit' : ''} branch-${e.branch}`} data-reveal>
-              <div className="rail" aria-hidden="true">
-                <span className="node" />
-                {i < experience.length - 1 && <span className="line" />}
+        {experience.map((e, i) => (
+          <div key={e.hash} className={`commit lit branch-${e.branch}`} data-reveal>
+            <div className="rail" aria-hidden="true">
+              <span className="node" />
+              {i < experience.length - 1 && <span className="line" />}
+            </div>
+            <div className="commit-body">
+              <div className="commit-meta mono">
+                <span className="hash">{e.hash}</span>
+                {i === 0 && <span className="head">HEAD → main</span>}
+                <span className="br">{e.branch === 'ml' ? 'feat/ml' : 'feat/web'}</span>
+                <span className="date">{e.period}</span>
               </div>
-              <div className="commit-body">
-                <div className="commit-meta mono">
-                  <span className="hash">{e.hash}</span>
-                  {i === 0 && <span className="head">HEAD → main</span>}
-                  <span className="br">{e.branch === 'ml' ? 'feat/ml' : 'feat/web'}</span>
-                  <span className="date">{e.period}</span>
-                </div>
-                <h3 className="commit-title">
-                  {e.role} <span className="at">@</span> {e.company}
-                </h3>
-                <ul key={mode}>
-                  {e.bullets[mode].map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
-                <div className="tags">
-                  {e.tags.map((t) => (
-                    <span key={t} className="tag">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+              <h3 className="commit-title">
+                {e.role} <span className="at">@</span> {e.company}
+              </h3>
+              <ul>
+                {e.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              <div className="tags">
+                {e.tags.map((t) => (
+                  <span key={t} className="tag">
+                    {t}
+                  </span>
+                ))}
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -408,13 +372,13 @@ function Experience({ mode }) {
 
 /* ---------------------------------------------------------------- stack */
 
-function Stack({ mode }) {
+function Stack() {
   const [hover, setHover] = useState(null);
-  const lit = skills.filter((s) => s.m[0] === mode).length;
+  const focusCount = skills.filter((s) => s.f).length;
   return (
     <section className="section" id="stack">
       <SectionHead n="04" kicker="periodic table" title={<>The elements I <em>build</em> with.</>}>
-        {lit} elements glow for the {modes[mode].label} view. Hover any tile.
+        {focusCount} glowing elements are my core AI/ML, GenAI and Data Science toolkit. Hover any tile.
       </SectionHead>
       <div className="ptable-wrap" data-reveal>
         <div className="ptable-legend">
@@ -426,30 +390,24 @@ function Stack({ mode }) {
           ))}
         </div>
         <div className="ptable">
-          {skills.map((s, i) => {
-            const primary = s.m[0] === mode;
-            const related = s.m.includes(mode);
-            return (
-              <div
-                key={s.n}
-                className={`el g-${s.g} ${primary ? 'primary' : related ? 'related' : 'dim'}`}
-                onMouseEnter={() => setHover(s)}
-                onMouseLeave={() => setHover(null)}
-                style={{ '--i': i }}
-              >
-                <span className="el-n mono">{i + 1}</span>
-                <span className="el-s">{s.s}</span>
-                <span className="el-name">{s.n}</span>
-              </div>
-            );
-          })}
+          {skills.map((s, i) => (
+            <div
+              key={s.n}
+              className={`el g-${s.g} ${s.f ? 'primary' : 'related'}`}
+              onMouseEnter={() => setHover(s)}
+              onMouseLeave={() => setHover(null)}
+            >
+              <span className="el-n mono">{i + 1}</span>
+              <span className="el-s">{s.s}</span>
+              <span className="el-name">{s.n}</span>
+            </div>
+          ))}
         </div>
         <div className="ptable-readout mono" aria-live="polite">
           {hover ? (
             <>
-              <span className="acc">{hover.s}</span> {hover.n} ·{' '}
-              {skillGroups.find((g) => g.key === hover.g).name} ·{' '}
-              {hover.m.map((m) => modes[m].label).join(' + ')}
+              <span className="acc">{hover.s}</span> {hover.n} · {skillGroups.find((g) => g.key === hover.g).name}
+              {hover.f ? ' · core focus' : ''}
             </>
           ) : (
             <span className="mute">hover an element to inspect it</span>
@@ -483,15 +441,9 @@ function Wins() {
 
 /* ---------------------------------------------------------------- contact */
 
-function Contact({ mode, setMode }) {
-  const [copied, setCopied] = useState(false);
+function Contact({ toast }) {
   const copy = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(profile.email).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-      });
-    }
+    if (navigator.clipboard) navigator.clipboard.writeText(profile.email).then(() => toast('Email copied'));
   };
 
   return (
@@ -500,18 +452,17 @@ function Contact({ mode, setMode }) {
       <div className="contact-grid">
         <div className="contact-left" data-reveal>
           <p className="contact-lead">
-            Hiring for a {mode === 'ai' ? 'ML, GenAI or AI engineering' : 'software, full-stack or backend'} role?
-            I reply fast.
+            Hiring for an AI/ML, GenAI, Data Science or software engineering role? I reply fast.
           </p>
           <a className="big-mail" href={`mailto:${profile.email}`}>
             {profile.email}
           </a>
           <div className="contact-actions">
             <button type="button" className="btn small ghost" onClick={copy}>
-              {copied ? 'Copied ✓' : 'Copy email'}
+              Copy email
             </button>
-            <a className="btn small ghost" href={profile.resume[mode]} target="_blank" rel="noreferrer">
-              {modes[mode].label} resume <Arrow />
+            <a className="btn small primary" href={profile.resume} target="_blank" rel="noreferrer">
+              Download resume <Arrow />
             </a>
           </div>
           <div className="socials">
@@ -532,15 +483,14 @@ function Contact({ mode, setMode }) {
           </div>
         </div>
         <div data-reveal>
-          <Terminal mode={mode} setMode={setMode} />
+          <Terminal />
         </div>
       </div>
     </section>
   );
 }
 
-function Footer({ mode, toast }) {
-  const shareUrl = `${window.location.origin}${window.location.pathname}?mode=${mode}`;
+function Footer({ toast }) {
   return (
     <footer className="footer">
       <div className="giant" aria-hidden="true">
@@ -552,10 +502,11 @@ function Footer({ mode, toast }) {
           type="button"
           className="linkish"
           onClick={() => {
-            if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).then(() => toast('Link copied'));
+            if (navigator.clipboard)
+              navigator.clipboard.writeText(`${window.location.origin}/`).then(() => toast('Link copied'));
           }}
         >
-          share the {modes[mode].label} view ↗
+          share this portfolio ↗
         </button>
         <span>
           press <kbd>⌘K</kbd> anywhere
@@ -568,7 +519,6 @@ function Footer({ mode, toast }) {
 /* ---------------------------------------------------------------- app */
 
 export default function App() {
-  const [mode, setModeState] = useState(initialMode);
   const [palette, setPalette] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [progress, setProgress] = useState(0);
@@ -580,24 +530,11 @@ export default function App() {
     setTimeout(() => setToastMsg(''), 1800);
   }, []);
 
-  const setMode = useCallback((m) => {
-    setModeState(m);
-    try {
-      window.localStorage.setItem('pp-mode', m);
-      const url = new URL(window.location.href);
-      url.searchParams.set('mode', m);
-      window.history.replaceState(null, '', url);
-    } catch (e) {
-      /* ignore */
+  useEffect(() => {
+    // Old shared links used ?mode=… — tidy the URL now that there is one view.
+    if (window.location.search.includes('mode=')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.hash);
     }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.mode = mode;
-    document.title = `Param Parikh — ${modes[mode].role}`;
-  }, [mode]);
-
-  useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
@@ -619,38 +556,35 @@ export default function App() {
 
   const actions = useMemo(
     () => [
-      { icon: '⇄', label: `Switch to ${mode === 'ai' ? 'Software' : 'AI / ML'} mode`, group: 'mode', keywords: 'ai ml sde software toggle', run: () => setMode(mode === 'ai' ? 'sde' : 'ai') },
-      { icon: '↓', label: `Open ${modes[mode].label} resume`, group: 'file', keywords: 'cv pdf download', run: () => window.open(profile.resume[mode], '_blank', 'noopener') },
-      { icon: '↓', label: `Open ${mode === 'ai' ? 'Software' : 'AI / ML'} resume`, group: 'file', keywords: 'cv pdf download', run: () => window.open(profile.resume[mode === 'ai' ? 'sde' : 'ai'], '_blank', 'noopener') },
+      { icon: '↓', label: 'Download resume', group: 'file', keywords: 'cv pdf', run: () => openUrl(profile.resume) },
       { icon: '#', label: 'Go to Work', group: 'nav', keywords: 'projects', run: () => scrollTo('work') },
       { icon: '#', label: 'Go to Experience', group: 'nav', keywords: 'internships jobs', run: () => scrollTo('experience') },
       { icon: '#', label: 'Go to Stack', group: 'nav', keywords: 'skills', run: () => scrollTo('stack') },
       { icon: '#', label: 'Go to Contact', group: 'nav', keywords: 'email hire', run: () => scrollTo('contact') },
       { icon: '@', label: 'Copy email address', group: 'contact', keywords: 'mail', run: () => navigator.clipboard && navigator.clipboard.writeText(profile.email).then(() => toast('Email copied')) },
-      { icon: '↗', label: 'Open GitHub', group: 'link', run: () => window.open(profile.github, '_blank', 'noopener') },
-      { icon: '↗', label: 'Open LinkedIn', group: 'link', run: () => window.open(profile.linkedin, '_blank', 'noopener') },
-      { icon: '↗', label: 'Open LeetCode', group: 'link', run: () => window.open(profile.leetcode, '_blank', 'noopener') },
-      { icon: '⧉', label: 'Copy link to this view', group: 'share', keywords: 'url share', run: () => navigator.clipboard && navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?mode=${mode}`).then(() => toast('Link copied')) },
+      { icon: '↗', label: 'Open GitHub', group: 'link', run: () => openUrl(profile.github) },
+      { icon: '↗', label: 'Open LinkedIn', group: 'link', run: () => openUrl(profile.linkedin) },
+      { icon: '↗', label: 'Open LeetCode', group: 'link', run: () => openUrl(profile.leetcode) },
     ],
-    [mode, setMode, toast]
+    [toast]
   );
 
   return (
     <>
       <div className="progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
-      <Nav mode={mode} setMode={setMode} openPalette={() => setPalette(true)} />
+      <Nav openPalette={() => setPalette(true)} />
       <main>
-        <Hero mode={mode} setMode={setMode} />
-        <Marquee mode={mode} />
-        <About mode={mode} />
-        <Work mode={mode} />
-        <Experience mode={mode} />
-        <Stack mode={mode} />
+        <Hero />
+        <Marquee />
+        <About />
+        <Work />
+        <Experience />
+        <Stack />
         <Wins />
-        <Contact mode={mode} setMode={setMode} />
+        <Contact toast={toast} />
       </main>
-      <Footer mode={mode} toast={toast} />
+      <Footer toast={toast} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} actions={actions} />
       <div className={`toast mono ${toastMsg ? 'show' : ''}`} role="status">
         {toastMsg}
